@@ -25,13 +25,15 @@ async def init_db():
         """)
         await db.commit()
 
-# Initialize database on startup
-asyncio.run(init_db())
+async def ensure_db():
+    await init_db()
+
 
 @mcp.tool()
 async def add_expense(date, amount, category, subcategory="", note=""):
     '''Add a new expense entry to the database.'''
     try:
+        await ensure_db()
         async with aiosqlite.connect(DB_PATH) as db:
             cursor = await db.execute(
                 "INSERT INTO expenses(date, amount, category, subcategory, note) VALUES (?,?,?,?,?)",
@@ -46,6 +48,7 @@ async def add_expense(date, amount, category, subcategory="", note=""):
 async def list_expenses(start_date, end_date):
     '''List expense entries within an inclusive date range.'''
     try:
+        await ensure_db()
         async with aiosqlite.connect(DB_PATH) as db:
             db.row_factory = aiosqlite.Row
             cursor = await db.execute(
@@ -66,6 +69,7 @@ async def list_expenses(start_date, end_date):
 async def get_expense(expense_id):
     '''Get a specific expense by ID.'''
     try:
+        await ensure_db()
         async with aiosqlite.connect(DB_PATH) as db:
             db.row_factory = aiosqlite.Row
             cursor = await db.execute(
@@ -87,6 +91,7 @@ async def get_expense(expense_id):
 async def edit_expense(expense_id, date=None, amount=None, category=None, subcategory=None, note=None):
     '''Edit an existing expense entry. Only provide fields you want to update.'''
     try:
+        await ensure_db()
         async with aiosqlite.connect(DB_PATH) as db:
             # First check if expense exists
             cursor = await db.execute("SELECT id FROM expenses WHERE id = ?", (expense_id,))
@@ -127,6 +132,7 @@ async def edit_expense(expense_id, date=None, amount=None, category=None, subcat
 async def delete_expense(expense_id):
     '''Delete an expense entry by ID.'''
     try:
+        await ensure_db()
         async with aiosqlite.connect(DB_PATH) as db:
             cursor = await db.execute("SELECT id FROM expenses WHERE id = ?", (expense_id,))
             if not await cursor.fetchone():
@@ -142,6 +148,7 @@ async def delete_expense(expense_id):
 async def summarize(start_date, end_date, category=None):
     '''Summarize expenses by category within an inclusive date range.'''
     try:
+        await ensure_db()
         async with aiosqlite.connect(DB_PATH) as db:
             db.row_factory = aiosqlite.Row
             query = (
