@@ -3,8 +3,23 @@ import os
 import aiosqlite
 import asyncio
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "expenses.db")
-CATEGORIES_PATH = os.path.join(os.path.dirname(__file__), "categories.json")
+BASE_DIR = os.path.dirname(__file__)
+DEFAULT_DB_PATH = os.path.join(BASE_DIR, "expenses.db")
+DB_PATH = os.getenv("DB_PATH", DEFAULT_DB_PATH)
+
+# If the app directory is read-only on the host platform, fallback to /tmp
+try:
+    db_dir = os.path.dirname(DB_PATH)
+    if not os.path.exists(db_dir):
+        os.makedirs(db_dir, exist_ok=True)
+    if not os.access(db_dir, os.W_OK):
+        DB_PATH = os.path.join("/tmp", "expenses.db")
+        os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+except Exception:
+    DB_PATH = os.path.join("/tmp", "expenses.db")
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+
+CATEGORIES_PATH = os.path.join(BASE_DIR, "categories.json")
 
 HOST = os.getenv("HOST", os.getenv("FASTMCP_HOST", "0.0.0.0"))
 PORT = int(os.getenv("PORT", os.getenv("FASTMCP_PORT", "8000")))
