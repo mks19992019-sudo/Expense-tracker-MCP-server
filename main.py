@@ -6,6 +6,9 @@ import asyncio
 DB_PATH = os.path.join(os.path.dirname(__file__), "expenses.db")
 CATEGORIES_PATH = os.path.join(os.path.dirname(__file__), "categories.json")
 
+HOST = os.getenv("HOST", os.getenv("FASTMCP_HOST", "0.0.0.0"))
+PORT = int(os.getenv("PORT", os.getenv("FASTMCP_PORT", "8000")))
+
 mcp = FastMCP("ExpenseTracker")
 
 async def init_db():
@@ -173,8 +176,10 @@ if __name__ == "__main__":
     print("Starting Async Expense Tracker MCP Server...")
     print(f"Database: {DB_PATH}")
     print(f"Categories: {CATEGORIES_PATH}")
+    print(f"Host: {HOST}")
+    print(f"Port: {PORT}")
     try:
-        mcp.run(transport='http', host="127.0.0.1", port=8000)
+        mcp.run(transport='http', host=HOST, port=PORT)
     except KeyboardInterrupt:
         print("\nServer stopped")
         sys.exit(0)
