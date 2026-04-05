@@ -20,7 +20,17 @@ This command will:
 - Install the FastMCP CLI tools
 - Set up the necessary configuration for Claude Desktop
 
-### Step 2: Configure Claude Desktop
+### Step 2: Find the uv File Location
+
+Before configuring Claude Desktop, you need to find the absolute path to your `uv` installation:
+
+```bash
+which uv
+```
+
+This command will output the full path to the `uv` executable (e.g., `/usr/local/bin/uv` or `/home/username/.local/bin/uv`). **Copy this path** - you'll need it in the next step.
+
+### Step 3: Configure Claude Desktop
 
 After running the above command, you need to edit the Claude Desktop configuration file:
 
@@ -28,22 +38,24 @@ After running the above command, you need to edit the Claude Desktop configurati
 
 2. Find the `mcpServers` section and locate the entry for this Expense Tracker server
 
-3. Edit the path to use the `uv` command. Your configuration should look similar to:
+3. Edit the configuration and replace `uv_path_here` with the path you copied from the `which uv` command. Your configuration should look similar to:
 
 ```json
 {
   "mcpServers": {
     "expense-tracker": {
-      "command": "uv",
+      "command": "/usr/local/bin/uv",
       "args": ["run", "--with", "fastmcp", "python", "/path/to/your/main.py"]
     }
   }
 }
 ```
 
-**Important**: Replace `/path/to/your/` with the actual path to where you have this project.
+**Important**: 
+- Replace `/usr/local/bin/uv` with the actual path from your `which uv` output
+- Replace `/path/to/your/` with the actual path to where you have this project
 
-### Step 3: Verify uv is Installed
+### Step 4: Verify uv is Installed
 
 To verify that `uv` is properly installed on your system, run:
 
