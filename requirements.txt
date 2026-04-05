@@ -1,0 +1,12 @@
+# Expense Tracker MCP Server Dependencies
+# 
+# This project uses 'uv' for dependency management.
+# 
+# To add dependencies, use:
+#   uv add package_name
+#
+# Core dependencies are defined in pyproject.toml
+# This file is provided for reference and compatibility.
+
+fastmcp>=3.2.0
+aiosqlite>=0.19.0
